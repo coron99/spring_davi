@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koreait.mapper.ReportMapper">
+	<insert id="insert">
+		INSERT INTO DAVI_BODY 
+		(MEMBERID, WEIGHT, RATE, STATUS, WEEK, REGDATE) 
+		VALUES(#{memberId}, #{weight}, 
+		(#{weight} - 
+			(SELECT WEIGHT FROM 
+				(SELECT /*+ INDEX_DESC(DAVI_BODY DAVI_BODY_REGDATE)*/ ROWNUM RN, WEIGHT FROM DAVI_BODY WHERE MEMBERID = #{memberId})
+			WHERE RN = 1) 
+		), 
+		#{status}, (CONCAT(TO_CHAR(SYSDATE, 'YY'), TO_CHAR(SYSDATE,'IW'))), TO_CHAR(SYSDATE,'MM-dd'))
+	</insert>
+	
+	<select id="getMember" resultType="com.koreait.domain.MemberVO">
+		SELECT * FROM DAVI_MEMBER WHERE MEMBERID = #{id}
+	</select>
+	
+	<select id="getBody" resultType="com.koreait.domain.BodyVO">
+		SELECT MEMBERID, WEIGHT, NVL(RATE, 0) RATE, STATUS, WEEK, REGDATE  FROM DAVI_BODY WHERE REGDATE = TO_CHAR(SYSDATE,'MM-dd') AND MEMBERID= #{id}
+	</select>
+	
+	<select id="getBodyList" resultType="com.koreait.domain.BodyVO">
+		<![CDATA[
+			SELECT TB.MEMBERID MEMBERID, TB.STATUS STATUS, TB.REGDATE REGDATE FROM 
+			(SELECT ROWNUM RN, TBL.MEMBERID, TBL.STATUS, TBL.REGDATE FROM 
+			(SELECT ROW_NUMBER() OVER(PARTITION BY MEMBERID ORDER BY STATUS DESC)AS RNUM, DAVI_BODY.* FROM DAVI_BODY ORDER BY STATUS DESC) TBL 
+			WHERE RNUM = 1) TB WHERE RN <= 5
+		]]>
+	</select>
+	
+	<select id="bodyListById" resultType="com.koreait.domain.BodyVO">
+		SELECT * FROM DAVI_BODY 
+		WHERE WEEK = (CONCAT(TO_CHAR(SYSDATE, 'YY'), TO_CHAR(SYSDATE,'IW'))) AND MEMBERID = #{memberId} 
+		ORDER BY REGDATE
+	</select>
+</mapper>

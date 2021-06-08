@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koreait.mapper.FreeBoardMapper">
+	<sql id="criteria">
+		<if test="type != null and keyword != null">
+			<trim prefix="(" suffix=") AND">
+				<foreach item="type" collection="typeArr">
+						<choose>
+							<when test="type=='T'.toString()">
+								(FREETITLE LIKE '%'||#{keyword}||'%')
+							</when>
+							<when test="type=='H'.toString()">
+								(FREEHEAD LIKE '%'||#{keyword}||'%')
+							</when>
+							<when test="type=='M'.toString()">
+								(MEMBERID LIKE '%'||#{keyword}||'%')
+							</when>
+						</choose>
+				</foreach>
+			</trim>
+		</if>
+	</sql>
+
+	<select id="getListWithPaging" resultType="com.koreait.domain.FreeBoardVO">
+			SELECT FREENUM, FREEHEAD, MEMBERID, FREETITLE, FREECONTENT,TO_CHAR(FREEDATE, 'YYYY-MM-DD HH24:MI') FREEDATE,FREENOTICE 
+			FROM 
+				(SELECT ROWNUM RN, FREENUM, FREEHEAD, MEMBERID, FREETITLE, FREECONTENT, FREEDATE,FREENOTICE 
+				FROM (SELECT FREENUM, FREEHEAD, MEMBERID, FREETITLE, FREECONTENT, FREEDATE,FREENOTICE FROM DAVI_FREE_BOARD ORDER BY FREENOTICE, FREENUM DESC )
+				WHERE 
+				<include refid="criteria"/>
+		<![CDATA[		
+				ROWNUM <= #{pageNum} * #{amount})
+			WHERE RN > (#{pageNum} - 1) * #{amount}
+		]]>
+	</select>
+	
+	
+	<select id="getTotal" resultType="_int">
+		SELECT COUNT(FREENUM) FROM DAVI_FREE_BOARD
+		<where>
+			<trim suffixOverrides="AND">
+				<include refid="criteria"/>
+			</trim>
+		</where>
+	</select>
+	
+	
+	<select id="read" resultType="com.koreait.domain.FreeBoardVO">
+		SELECT FREENUM, FREEHEAD, MEMBERID, FREETITLE, FREECONTENT,TO_CHAR(FREEDATE, 'YYYY-MM-DD HH24:MI') FREEDATE,FREENOTICE FROM DAVI_FREE_BOARD WHERE FREENUM = #{freeNum}
+	</select>
+	
+	<insert id="insert">
+	INSERT INTO DAVI_FREE_BOARD (FREENUM, FREEHEAD, MEMBERID, FREETITLE, FREECONTENT, FREEDATE, FREENOTICE)
+	VALUES(FREE_SEQ.NEXTVAL, #{freeHead},#{memberId},#{freeTitle},#{freeContent},SYSDATE, #{freeNotice})
+	</insert>
+	
+	<delete id="delete">
+	DELETE FROM DAVI_FREE_BOARD WHERE FREENUM=#{freeNum}
+	</delete>
+	
+	<update id="update">
+	UPDATE DAVI_FREE_BOARD
+	SET FREETITLE=#{freeTitle}, FREECONTENT=#{freeContent}
+	WHERE FREENUM=#{freeNum}
+	</update>
+	
+	<insert id="replyInsert">
+		INSERT INTO FREE_REPLY 
+		(FREENUM, REPLYNUM, PARENTREPLYNUM, MEMBERID, CONTENT, REPLYDATE, PARENTREPLYID) 
+		VALUES(#{freeNum}, REPLY_SEQ.NEXTVAL, #{parentReplyNum}, #{memberId}, #{content}, SYSDATE, #{parentReplyId})
+	</insert>
+	
+	<select id="replyList" resultType="com.koreait.domain.FreeReplyVO">
+		SELECT FREENUM, REPLYNUM, PARENTREPLYNUM, MEMBERID, CONTENT, TO_CHAR(REPLYDATE, 'YYYY-MM-DD HH24:MI') REPLYDATE , PARENTREPLYID 
+		FROM (SELECT * FROM FREE_REPLY WHERE FREENUM = #{freeNum}) 
+		START WITH PARENTREPLYNUM = 0 
+		CONNECT BY PRIOR REPLYNUM = PARENTREPLYNUM ORDER SIBLINGS BY REPLYNUM
+	</select>
+	
+	<delete id="replyDelete">
+		DELETE FREE_REPLY WHERE REPLYNUM = #{replyNum} OR PARENTREPLYNUM = #{replyNum}
+	</delete>
+	
+	<update id="replyUpdate">
+		UPDATE FREE_REPLY SET CONTENT = #{content} WHERE REPLYNUM = #{replyNum}
+	</update>	
+	
+	<select id="parentNumToId" resultType="string">
+		SELECT MEMBERID FROM FREE_REPLY WHERE REPLYNUM = #{parentReplyNum}
+	</select>	
+</mapper>

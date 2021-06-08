@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koreait.mapper.SnsMapper">
+	<insert id="insert" >
+	INSERT INTO SNS_BOARD (BNO, FILENAME, CONTENT, MEMBERID, REGDATE,UPLOADPATH,UUID) 
+	VALUES(SNS_SEQ.NEXTVAL, #{fileName}, #{content}, #{memberId} , SYSDATE ,#{uploadPath},#{uuid})
+	</insert>
+	
+	<select id="getList" resultType="com.koreait.domain.SnsBoardVO">
+	<![CDATA[
+	SELECT BNO, FILENAME, CONTENT, MEMBERID, TO_CHAR(REGDATE,'yyyy-MM-dd') REGDATE,UPLOADPATH,UUID FROM
+	(SELECT /*+ INDEX_DESC(SNS_BOARD SNS_PK) */ ROWNUM RN, BNO, FILENAME, CONTENT, MEMBERID, REGDATE,UPLOADPATH,UUID FROM SNS_BOARD
+	WHERE ROWNUM <= #{pageNum}*#{amount})
+	WHERE RN > (#{pageNum}-1)*#{amount}
+	]]> 
+	</select>
+	
+	<delete id="delete">
+	DELETE FROM SNS_BOARD WHERE BNO=#{bno}
+	</delete>
+	
+	<select id="getTotal" resultType="_int">
+	SELECT COUNT(BNO) FROM SNS_BOARD
+	</select>
+	
+	<update id="insertOrDeleteLike">
+		MERGE INTO SNS_LIKE L 
+        USING DUAL 
+        ON (L.MEMBERID= #{memberId} AND L.BNO = #{bno}) 
+        WHEN MATCHED THEN 
+        UPDATE SET L.LNO = L.LNO
+        DELETE WHERE L.MEMBERID = #{memberId} AND L.BNO = #{bno}
+        WHEN NOT MATCHED THEN 
+        INSERT (L.LNO,L.MEMBERID,L.BNO) VALUES(LIKE_SEQ.NEXTVAL,#{memberId},#{bno})
+	</update>
+
+	
+	<select id="getLikeCnt" resultType="_int">
+		SELECT COUNT(BNO) FROM SNS_LIKE WHERE BNO = #{bno}
+	</select>
+	
+	<select id="getLikebyId" resultType="_int">
+		SELECT COUNT(BNO) FROM SNS_LIKE WHERE MEMBERID = #{memberId} AND BNO = #{bno}
+	</select>
+</mapper>

@@ -1,0 +1,164 @@
+@charset "UTF-8";
+@import url(//fonts.googleapis.com/earlyaccess/hanna.css);
+@import url(//fonts.googleapis.com/earlyaccess/jejugothic.css);
+	
+	.note-editor.note-frame, .note-editor.note-airframe {
+	border: 1px solid white !important;
+	}
+	.reReply{
+		color:#807d7d;
+	}
+	
+	.modifyText{
+		color:red;
+		font-weight:bold;
+		font-family: 'Jeju Gothic', sans-serif;
+	}
+	.replyContentModify{
+		font-family: 'Jeju Gothic', sans-serif;
+		background:#dcdbdb;
+		width:80%;
+		border:0;
+		font-size: 1.25em;
+	}
+	.reReplyContent{
+		font-family: 'Jeju Gothic', sans-serif;
+		background:#dcdbdb;
+		width:77%;
+		border:0;
+		font-size: 1.25em;
+	}
+	a{
+		color:black;
+		font-family: 'Jeju Gothic', sans-serif;
+	}
+	#replyInputFrame{
+		width:50%;
+		margin:0 auto;
+		
+	}
+	.replyListFrame{
+		width:50%;
+		margin:1rem auto;
+		background: #dcdbdb;
+		padding:0.7rem;
+		font-family: 'Jeju Gothic', sans-serif;
+	}
+	#mainBoard{
+		width:50%;
+		margin:0 auto;
+	}
+	#mainFrame{
+		width:50%;
+		margin:0 auto;
+		font-size: 1.5em;
+	}
+	h3{
+		font-family: 'Hanna', sans-serif;
+		margin-left:2rem;
+	}
+	h5{
+		font-family: 'Jeju Gothic', sans-serif;
+	}
+	#freeTitle{
+		background-color:#dcdbdb;
+		border-top: 3px solid #1d1a1a;
+		border-bottom: 5px solid #1d1a1a;
+		display:flex;
+		justify-content: space-between;
+	}
+	#topDiv{
+		display:flex;
+		justify-content: space-between;
+	}
+	#summerDiv{
+		margin-top:1rem;
+	}
+	#modifyTitle{
+		display:none;
+		width:99%;
+		font-family: 'Hanna', sans-serif;
+		padding: .3rem 0em;
+		font-size:1.6rem;
+		background-color:#dcdbdb;
+	}
+	
+	#articleInput{
+		padding:2%; border:2px solid black;
+		margin-top : 2rem;
+	}
+	
+	#replyInputTextarea{
+		width:77%;
+		height:60px;
+		border:0px;
+	}
+	
+	#replyInputButton{
+		width:20%;
+		height:60px;
+		float: right;
+		padding:0;
+	}
+	
+	.reReplyInputButton{
+		width:20%;
+		height:60px;
+		float: right;
+		padding:0;
+	}
+	.userDiv{
+		margin-bottom : 1rem;
+	}
+	
+	.replyId{
+		font-size:1.1rem;
+		color:black;
+		margin-right:1rem;
+	}
+	
+	.replyDate{
+		font-size:0.9rem;
+		margin-right:1rem;
+	}
+	.userContent{
+		margin-bottom:1rem;
+	}
+	
+	.replyIcons{float:right;}
+	@media ( max-width : 575.98px) {
+		#replyInputTextarea{width:70% !important;}
+		#replyInputButton{width:25% !important;}
+		#mainBoard{
+			width:100% !important;
+			margin:0 auto;
+		}
+		#mainFrame{
+			width:100% !important;
+			margin:0 auto;
+			font-size:2em !important;
+		}
+		#freeMem{display:none;}
+		#replyInputFrame{width:100% !important;}
+		.replyListFrame{width:100% !important;}
+		html, body {
+		max-width: 100%;
+		overflow-x: hidden;
+		}
+	}
+	
+	@media ( max-width : 1199.98px) {
+		#replyInputTextarea{width:78% !important;}
+		#replyInputButton{width:20% !important;}
+		#mainBoard{
+			width:70%;
+			margin:0 auto;
+		}
+		#mainFrame{
+			width:70%;
+			margin:0 auto;
+			font-size: 1.5em;
+		}
+		#replyInputFrame{width:70%;}
+		.replyListFrame{width:70%;}
+	}

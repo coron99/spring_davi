@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koreait.mapper.FoodMapper">
+	<insert id="insert">
+		<!-- 시퀀스 증가후(order="BEFORE")에 현제 시퀀스 값을  VO에 자동으로 맵핑 -->
+		<selectKey keyProperty="fno" resultType="long" order="BEFORE">
+			SELECT FOOD_SEQ.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO FOOD_KINDS (FNO, FOODNAME, SUMMARY, CALORIE, PREPTIME, COOKTIME, SERVES, DIFFICULTY, FILENAME, EATTIME) 
+		VALUES (#{fno}, #{foodName}, #{summary}, #{calorie}, #{prepTime}, #{cookTime}, #{serves}, #{difficulty}, #{fileName}, #{eatTime})
+	</insert>
+	
+	<insert id="insertMaterial" >
+		INSERT INTO FOOD_MATERIAL (MNO, FNO, MATERIAL) 
+		SELECT MATERIAL_SEQ.NEXTVAL, NM.* FROM ( 
+			<foreach collection="materials" item="material" separator="UNION ALL">
+				SELECT #{fno} AS FNO, #{material} AS MATERIAL FROM DUAL		
+			</foreach>
+		) NM
+	</insert>	
+	
+	<insert id="insertRecipe">
+		INSERT INTO FOOD_RECIPE (RNO, FNO, RECIPE) 
+		SELECT RECIPE_SEQ.NEXTVAL, NR.* FROM ( 
+			<foreach collection="recipes" item="recipe" separator="UNION ALL">
+				SELECT #{fno} AS FNO, #{recipe} AS RECIPE FROM DUAL		
+			</foreach>
+		) NR	
+	</insert>
+	
+	<select id="get" resultType="com.koreait.domain.FoodVO">
+		SELECT * FROM FOOD_KINDS WHERE FNO = #{fno}
+	</select>	
+	
+	<select id="getList" resultType="com.koreait.domain.FoodVO">
+		SELECT FNO, FOODNAME, SUMMARY, CALORIE, FILENAME, EATTIME FROM FOOD_KINDS WHERE EATTIME = #{eatTime}
+	</select>
+	
+	<select id="getListAll" resultType="com.koreait.domain.FoodVO">
+		SELECT FNO, FOODNAME, CALORIE, FILENAME FROM FOOD_KINDS
+	</select>	
+	
+	<select id="getMaterial" resultType="string">
+		SELECT MATERIAL FROM FOOD_MATERIAL WHERE FNO = #{fno}
+	</select>
+	
+	<select id="getRecipe" resultType="string">
+		SELECT RECIPE FROM FOOD_RECIPE WHERE FNO = #{fno}
+	</select>
+	
+	<delete id="delete">
+		DELETE FOOD_KINDS WHERE FNO = #{fno}
+	</delete>	
+
+</mapper>
