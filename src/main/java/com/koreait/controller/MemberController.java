@@ -23,8 +23,7 @@ public class MemberController {
 	
 	@PostMapping("/join")
 	public String join(MemberVO vo) {
-		log.info("join.....");
-		log.info("vo: " + vo);
+		log.info("join.....");		
 		vo.setPassword(encrypt(vo.getPassword()));
 		service.join(vo);
 		return "redirect:/home";
@@ -33,8 +32,7 @@ public class MemberController {
 	@PostMapping("/login")
 	public String login(MemberVO vo, HttpSession session) {
 		log.info("login.....");
-		vo.setPassword(encrypt(vo.getPassword()));
-		log.info("vo: " + vo);
+		vo.setPassword(encrypt(vo.getPassword()));	
 		if(service.login(vo)) {
 			log.info("로그인 성공");
 			session.setAttribute("sessionId", vo.getMemberId());			

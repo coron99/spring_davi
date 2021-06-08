@@ -29,7 +29,7 @@ public class FoodController {
 	
 	@GetMapping(value="/foods")
 	public void foodList(Model model) {
-		log.info("list +");
+		log.info("list ...");
 		model.addAttribute("lists", service.getFoodList());
 		model.addAttribute("list", service.getFoodListAll());					
 	}
@@ -56,23 +56,23 @@ public class FoodController {
 		
 		String fileName = foodImg.getOriginalFilename();		
 		
-		log.info("파일이름받기2");
+		
 		File uploadPath = new File(uploadFolder);
 		File saveFile = new File(uploadPath, fileName);
-		log.info("1차");
+		
 		//폴더가 존재하지 않을경우 make
 		if(!uploadPath.exists()) {
 			uploadPath.mkdirs();
 		}
-		log.info("2차");
+		
+		//파일업로드
 		try {foodImg.transferTo(saveFile);} catch (Exception e) {;}
-		log.info("3차");
+		
 		
 		
 		vo.setFileName(fileName);
-		log.info("write food완 : " + vo);
-		service.write(vo);
-		log.info("4차");
+		
+		service.write(vo);		
 		return "redirect:/food/foods";
 	}
 

@@ -30,7 +30,7 @@ public class ReportController {
 	
 	@GetMapping("/reportView")
 	public void reportView(HttpSession session, Model model) {
-		log.info("report들어옴");
+		log.info("report..");
 		String id = (String)session.getAttribute("sessionId");
 		BodyVO bodyVO = service.getBody(id);
 		if(bodyVO == null) {
